@@ -3,7 +3,7 @@ const { createSchool } = require('./schools.js');
 const { createStudent } = require('./students.js');
 const { createTeacher } = require('./teachers.js');
 const { createStudentTeacher } = require('./studentsTeachers.js')
-const destroyTables = async () => {
+const dropTables = async () => {
   try{
     await client.query(`
     DROP TABLE IF EXISTS students_teachers;
@@ -18,7 +18,7 @@ const destroyTables = async () => {
 }
 
 
-const makeTables = async() => {
+const createTables = async() => {
   try{
     await client.query(`
       CREATE TABLE schools (
@@ -66,10 +66,10 @@ const syncAndSeed = async() => {
     await client.connect();
     console.log('SUCCESS! Client Connected.');
 
-    await destroyTables();
+    await dropTables();
     console.log(`SUCCESS! Dropped tables.`);
 
-    await makeTables();
+    await createTables();
     console.log(`SUCCESS! Created tables`);
 
     const nyu = await createSchool('New York University', 'New York', 'NY', '10012', true)
