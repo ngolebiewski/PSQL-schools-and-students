@@ -1,7 +1,8 @@
 const client = require('./client.js');
 const { createSchool } = require('./schools.js');
 const { createStudent } = require('./students.js');
-
+const { createTeacher } = require('./teachers.js');
+const { createStudentTeacher } = require('./studentsTeachers.js')
 const destroyTables = async () => {
   try{
     await client.query(`
@@ -43,8 +44,7 @@ const makeTables = async() => {
       CREATE TABLE teachers (
         id SERIAL PRIMARY KEY,
         name VARCHAR(40) NOT NULL,
-        subject VARCHAR(40) NOT NULL,
-        school_id INTEGER REFERENCES schools(id)
+        subject VARCHAR(40) NOT NULL
       );
 
       CREATE TABLE students_teachers (
@@ -76,12 +76,20 @@ const syncAndSeed = async() => {
     const mit = await createSchool('MIT', 'Cambridge', 'MA', '08982', true)
     console.log('added schools!')
 
-
     const phil = await createStudent(12, 4.0, 'Phil Tolkein', '2023-10-09', '2024-09-02', true, mit.id);
     const kate = await createStudent(8, 2.0, 'Kate Katoferson', '2013-10-09', '2029-12-01', false, mit.id);
     const monica = await createStudent(10, 3.5, 'Monica Escobar', '2020-01-01', '2025-09-02', true, nyu.id);
- 
     console.log('added students');
+
+    const drSmith = await createTeacher('Doctor Smith', 'Biology');
+    const wolf = await createTeacher('Naomi Wolf', 'English');
+    console.log('added teachers')
+
+    await createStudentTeacher(phil.id, drSmith.id);
+    await createStudentTeacher(phil.id, wolf.id);
+    await createStudentTeacher(kate.id, wolf.id);
+    await createStudentTeacher(monica.id, drSmith.id);
+    console.log('added student-teacher connection');
 
   } catch (error) {
     console.log(error);
